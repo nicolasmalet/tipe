@@ -18,8 +18,10 @@ t = 9*10**(-4)
 
 plotting = True
 
+
 def v_sum(v1, v2):
     return v1[0] + v2[0], v1[1] + v2[1]
+
 
 def v_list_sum(l):
     return sum(l[i][0] for i in range(len(l))), sum(l[i][1] for i in range(len(l)))
