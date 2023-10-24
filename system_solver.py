@@ -1,12 +1,12 @@
 
 
-def gaussian_algorith(a, b):  # solve any system with n equations for n variables
+def gaussian_algorithm(a, b):  # solve any system with n equations for n variables
     s = a
     for i in range(len(s)):
         s[i].append(b[i])
     to_triangular(s)
     solve(s)
-    return [s[i][-1] for i in range(len(s))]
+    return [s[i][-1] for i in range(len(s))]  # solutions are on the right column
 
 
 def to_triangular(s):  # make a a triangular matrix, changing b accordingly
@@ -29,7 +29,7 @@ def solve(s):  # s is supposed to be triangular
             sub(s, i, n, s[i][n])
 
 
-def normalize(s, i):
+def normalize(s, i):  # change the pivot value to 1
     for j in range(len(s[i])):
         if s[i][j] != 0:
             c = s[i][j]
@@ -38,7 +38,7 @@ def normalize(s, i):
             break
 
 
-def swap(s, i1, i2):
+def swap(s, i1, i2):  # swap two lines
     s[i1], s[i2] = s[i2], s[i1]
 
 
@@ -49,6 +49,6 @@ def sub(s, i1, i2, c=1):
 
 def print_matrix(m):
     for i in range(len(m)):
-        print(m[i])
+        print([m[i][j] for j in range(len(m[i]))])
     print()
 
