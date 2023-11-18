@@ -2,7 +2,7 @@ from numpy import cos, sin
 from constants import g, t
 
 
-def a(i, j, n, bones):
+def a(i, j, n, bones):  # return the aij coefficient of A
 
     # we will work on nxn blocs
     qi, qj = i // n, j // n
@@ -11,9 +11,9 @@ def a(i, j, n, bones):
     if qi == 0:  # first equation
         if qj == 0:  # set thetas
             if ri == rj:
-                return bones[ri].mass * bones[ri].length * cos(bones[ri].angle) / 2 / t ** 2
+                return bones[ri].m * bones[ri].r * cos(bones[ri].theta) / 2 / t ** 2
             if ri > rj:
-                return bones[ri].mass * bones[rj].length * cos(bones[rj].angle) / t ** 2
+                return bones[ri].m * bones[rj].r * cos(bones[rj].theta) / t ** 2
         if qj == 1:  # set Rxs
             if rj == ri:
                 return -1
@@ -23,9 +23,9 @@ def a(i, j, n, bones):
     if qi == 1:  # second equation
         if qj == 0:  # set thetas
             if ri == rj:
-                return bones[ri].mass * bones[ri].length * sin(bones[ri].angle) / 2 / t ** 2
+                return bones[ri].m * bones[ri].r * sin(bones[ri].theta) / 2 / t ** 2
             if ri > rj:
-                return bones[ri].mass * bones[rj].length * sin(bones[rj].angle) / t ** 2
+                return bones[ri].m * bones[rj].r * sin(bones[rj].theta) / t ** 2
         if qj == 2:  # set Rys
             if rj == ri:
                 return -1
@@ -35,39 +35,42 @@ def a(i, j, n, bones):
     if qi == 2:  # third equation
         if qj == 0:  # set thetas
             if ri == rj:
-                return bones[ri].moment_of_inertia / t ** 2
+                return bones[ri].J / t ** 2
         if qj == 1:  # set Rx
             if rj == ri:
-                return bones[ri].length * cos(bones[ri].angle) / 2
+                return bones[ri].r * cos(bones[ri].theta) / 2
             if rj == ri + 1:
-                return bones[ri].length * cos(bones[ri].angle) / 2
+                return bones[ri].r * cos(bones[ri].theta) / 2
         if qj == 2:  # set Ry
             if rj == ri:
-                return bones[ri].length * sin(bones[ri].angle) / 2
+                return bones[ri].r * sin(bones[ri].theta) / 2
             if rj == ri + 1:
-                return bones[ri].length * sin(bones[ri].angle) / 2
+                return bones[ri].r * sin(bones[ri].theta) / 2
     return 0  # everywhere else
 
 
-def b(i, n, bones):
+def b(i, n, bones, efforts):  # return the bi coefficient of b
 
-    q, r = i // n, i % n
-
-    m = bones[r].mass
-    l = bones[r].length
-    th = bones[r].angles[-1]  # is θk in euler's method
-    _th = bones[r].angles[-2]  # is θk-1 in euler's method
-    J = bones[r].moment_of_inertia
+    q, rest = i // n, i % n
+    bone = bones[rest]
+    effort = efforts[rest]
+    m = bone.m
+    r = bone.r
+    th = bone.l_theta[-1]  # is theta_k in euler's method
+    _th = bone.l_theta[-2]  # is theta_k-1 in euler's method
+    J = bone.J
+    Fm = bone.F_tot_muscle(effort)
+    Tm = bone.C_tot_muscle(effort)
 
     if q == 0:
-        return (m * l / 2 / t ** 2 * (cos(th) * (2 * th - _th) + sin(th) * (th - _th) ** 2) +
-                m / t ** 2 * sum(bones[p].length * (cos(bones[p].angle) * (2 * bones[p].angle - bones[p].angles[-2]) +
-                                                    sin(bones[p].angle) * (bones[p].angle - bones[p].angles[-2]) ** 2)
-                                 for p in range(0, r)))
+        return (Fm[0] + m * r / 2 / t ** 2 * (cos(th) * (2 * th - _th) + sin(th) * (th - _th) ** 2) +
+                m / t ** 2 * sum(bones[p].r * (cos(bones[p].theta) * (2 * bones[p].theta - bones[p].l_theta[-2]) +
+                                               sin(bones[p].theta) * (bones[p].theta - bones[p].l_theta[-2]) ** 2)
+                                 for p in range(0, rest)))
     if q == 1:
-        return (m * l / 2 / t ** 2 * (sin(th) * (2 * th - _th) - cos(th) * (th - _th) ** 2) - m * g +
-                m / t ** 2 * sum(bones[p].length * (sin(bones[p].angle) * (2 * bones[p].angle - bones[p].angles[-2]) -
-                                                    cos(bones[p].angle) * (bones[p].angle - bones[p].angles[-2]) ** 2)
-                                 for p in range(0, r)))
+        return (Fm[1] + m * r / 2 / t ** 2 * (sin(th) * (2 * th - _th) - cos(th) * (th - _th) ** 2) - m * g +
+                m / t ** 2 * sum(bones[p].r * (sin(bones[p].theta) * (2 * bones[p].theta - bones[p].l_theta[-2]) -
+                                               cos(bones[p].theta) * (bones[p].theta - bones[p].l_theta[-2]) ** 2)
+                                 for p in range(0, rest)))
     else:
-        return J / t ** 2 * (2 * th - _th)
+        return J / t ** 2 * (2 * th - _th) + Tm

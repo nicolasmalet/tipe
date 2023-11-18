@@ -1,14 +1,12 @@
-from energy import total_kinetic_energy, total_potential_energy
-from bone import bones
+from energy import total_kinetic_energy, total_potential_energy, P_muscle
+from bone import bones, muscles
 import matplotlib.pyplot as plt
 from constants import t, N
-from utils import l_sum
+from utils import l_sum, generalized_l_sum, differentiate, integrate
 
-fig, axs = plt.subplots(2, 2)
 
 Ec, Ep = [], []
-velocities = []
-accelerations = []
+l_P_muscle = [[] for i in range(len(muscles))]
 
 
 def update_energy():
@@ -16,32 +14,24 @@ def update_energy():
     Ep.append(total_potential_energy(bones))
 
 
-def update_velocity():
-    velocities.append([bone.angular_velocity() for bone in bones])
+def update_muscle_power():
+    for i in range(len(muscles)):
+        l_P_muscle[i].append(P_muscle(muscles[i]))
 
 
-def update_acceleration():
-    accelerations.append([bone.angular_acceleration() for bone in bones])
+def plot_movement():  # plot each graph
 
-
-def unpack(l, i):
-    return [l[j][i] for j in range(len(l))]
-
-
-def plot_all():  # plot each graph
+    fig, axs = plt.subplots(2, 2)
     t_axis = [i * t for i in range(N)]
 
     for i in range(len(bones)):
-        axs[0, 0].plot(t_axis, bones[i].angles[0:N], label='theta' + str(i))
-        axs[0, 1].plot(t_axis, unpack(velocities, i), label='theta' + str(i) + '_dot')
-        axs[1, 0].plot(t_axis, unpack(accelerations, i), label='theta' + str(i) + '_dotdot')
+        axs[0, 0].plot(t_axis, bones[i].l_theta[0:N], label='theta' + str(i))
+        axs[0, 1].plot(t_axis, differentiate(bones[i].l_theta)[0:N], label='theta' + str(i) + '_dot')
+        axs[1, 0].plot(t_axis, differentiate(differentiate(bones[i].l_theta))[0:N], label='theta' + str(i) + '_dotdot')
 
     axs[1, 1].plot(t_axis, Ec, label='Ec', color='red')
     axs[1, 1].plot(t_axis, Ep, label='Ep', color='blue')
     axs[1, 1].plot(t_axis, l_sum(Ec, Ep), label='E', color='black')
-
-    for ax in fig.get_axes():
-        ax.legend()
 
     axs[0, 0].set_title('Angle')
     axs[0, 1].set_title('Angular velocity')
@@ -57,5 +47,46 @@ def plot_all():  # plot each graph
     axs[0, 1].set_ylabel('angular velocity (rad/s)')
     axs[1, 0].set_ylabel('angular acceleration (rad/s2)')
     axs[1, 1].set_ylabel('Energy (J)')
+
+    for ax in fig.get_axes():
+        ax.legend()
+
+    plt.show()
+
+
+def plot_energies():
+    fig, axs = plt.subplots(2, 2)
+    t_axis = [i * t for i in range(N)]
+
+    axs[0, 0].plot(t_axis, Ec, label='Ec', color='red')
+    axs[0, 0].plot(t_axis, Ep, label='Ep', color='blue')
+    axs[0, 0].plot(t_axis, l_sum(Ec, Ep), label='E', color='black')
+
+    for i in range(len(l_P_muscle)):
+        axs[0, 1].plot(t_axis, integrate(l_P_muscle[i])[0:N], label='E_muscle_' + str(i))
+
+    axs[1, 0].plot(t_axis, l_sum(Ec, Ep), label='E', color='black')
+    axs[1, 0].plot(t_axis, integrate(generalized_l_sum(l_P_muscle))[0:N], label='E_tot_muscle', color='red')
+
+    axs[1, 1].plot(t_axis[0:N-1], differentiate((l_sum(Ec, Ep))), label='P_system', color='black')
+    axs[1, 1].plot(t_axis, generalized_l_sum(l_P_muscle), label='P_tot_muscle', color='red')
+
+    axs[0, 0].set_title('system energy')
+    axs[0, 1].set_title('muscle energy')
+    axs[1, 0].set_title('mechanical energy and total muscle energy')
+    axs[1, 1].set_title('accuracy')
+
+    axs[0, 0].set_xlabel('time (s)')
+    axs[0, 1].set_xlabel('time (s)')
+    axs[1, 0].set_xlabel('time (s)')
+    axs[1, 1].set_xlabel('time (s)')
+
+    axs[0, 0].set_ylabel('Energy (J)')
+    axs[0, 1].set_ylabel('Energy (J)')
+    axs[1, 0].set_ylabel('Energy (J)')
+    axs[1, 1].set_ylabel('Energy (J)')
+
+    for ax in fig.get_axes():
+        ax.legend()
 
     plt.show()
