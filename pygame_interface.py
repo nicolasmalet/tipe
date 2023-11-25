@@ -9,12 +9,11 @@ if simulation:
     screen_size_y = 900
     screen = pg.display.set_mode((screen_size_x, screen_size_y))
 
-    background_color = (20, 20, 20)
     screen.fill(background_color)
 
-    focus = [0, -1]
+    focus = [0, 0.7]
     pixel_per_meter = 3176  # the ratio of my screen
-    ratio_screen_reality = 1/10
+    ratio_screen_reality = 1/7
 
 
 def pos_to_screen(pos):  # ! for pg the y_axis is oriented towards the bottom
@@ -48,9 +47,15 @@ def draw_tendon_speed(muscle):
     draw_vector(muscle.tendon_position(muscle.bone1), scalar_mul(1 / 10, muscle.bone1.v_tendon(muscle)), 'green')
 
 
+def draw_ground():
+    pg.draw.aaline(screen, ground_color, [0, pos_to_screen([0, 0])[1]], [screen_size_x, pos_to_screen([0, 0])[1]])
+
+
 def update_display():
     if simulation:
         screen.fill(background_color)
+        if draw_ground:
+            draw_ground()
         for bone in bones:
             draw_bone(bone)
         for muscle in muscles:

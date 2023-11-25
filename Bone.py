@@ -1,9 +1,6 @@
 from numpy import sin, cos, pi
 from utils import v_sum, v_sub, scalar_mul, v_list_sum, change_basis, norm
-from constants import g, t
-
-bone_color = (255, 255, 255)
-muscle_color = (255, 0, 0)
+from constants import *
 
 
 class Bone:
@@ -12,7 +9,7 @@ class Bone:
         self.r = length
         self.m = mass
         self.theta = theta0
-        self.l_theta = [theta0, theta0, theta0]
+        self.l_theta = [theta0, theta0]
         self.color = color
         self.J = 1 / 12 * mass * length ** 2  # moment of inertia for the axis around the center of gravity
         self.Ep0 = 0  # set it later
@@ -41,9 +38,6 @@ class Bone:
 
     def theta_dot(self):
         return (self.l_theta[-1] - self.l_theta[-2]) / t
-
-    def theta_dot_dot(self):
-        return (self.l_theta[-1] - 2 * self.l_theta[-2] + self.l_theta[-3]) / t ** 2
 
     def G_dot(self):  # velocity of the center of gravity
         return v_sum(scalar_mul(0.5 * self.r * self.theta_dot(), self.e_theta()),
@@ -114,22 +108,25 @@ class Muscle:
 
 #
 
+ground = Bone(0, 1, pi/2, 0, bone_color)
+tibia = Bone(0, 0.49, - 5 * pi / 6, 6, bone_color)
+femur = Bone(1, 0.43, 4 * pi / 6, 14, bone_color)
+back = Bone(2, 0.53, -4 * pi / 6, 38, bone_color)
+arm = Bone(3, 0.70, 0, 8, bone_color)
 
-bone0 = Bone(0, 0.5, 1, 1, bone_color)
-bone1 = Bone(1, 0.5, 1, 1, bone_color)
-bone2 = Bone(2, 0.5, 1, 1, bone_color)
-bone3 = Bone(3, 0.5, 1, 1, bone_color)
+calves = Muscle(ground, tibia, [0.05, 0], [0.4, 0], 5000, muscle_color)
+quadriceps = Muscle(tibia, femur, [0.55, 0], [0.35, 0], 5000, muscle_color)
+hamstrings = Muscle(femur, back, [0.1, 0], [-0.05, 0], 5000, muscle_color)
+lats = Muscle(back, arm, [0.1, 0], [0.1, 0], 5000, muscle_color)
 
-muscle01 = Muscle(bone0, bone1, [0.25, 0], [0.25, 0], 30, muscle_color)
-muscle12 = Muscle(bone1, bone2, [0.25, 0], [0.25, 0], 20, muscle_color)
-muscle23 = Muscle(bone2, bone3, [0.25, 0], [0.25, 0], 10, muscle_color)
+bones = [tibia, femur, back, arm]
 
-bones = [bone0, bone1, bone2, bone3]
-muscles = [muscle01, muscle12, muscle23]
+muscles = [calves, quadriceps, hamstrings, lats]
 
-bone0.muscles = [muscle01]
-bone1.muscles = [muscle01, muscle12]
-bone2.muscles = [muscle12, muscle23]
-bone3.muscles = [muscle23]
+tibia.muscles = [calves, quadriceps]
+femur.muscles = [quadriceps, hamstrings]
+back.muscles = [hamstrings, lats]
+arm.muscles = [lats]
+
 
 set_Ep0()

@@ -3,12 +3,12 @@ from system_solver import gaussian_algorithm
 from matrix import a, b
 from pygame_interface import update_display
 from bone import bones
-from plot import update_energy, update_muscle_power, plot_movement, plot_energies
+from plot import update_energy, update_muscle_power, plot_movement, plot_energies, plot_phase_portrait
 from constants import *
 
 
 n = len(bones)
-efforts = [1, 1, 1, 1]
+efforts = [1] * len(bones) * 2
 
 
 def update():
@@ -52,7 +52,5 @@ else:  # simulation + graphs
         plot_energies()
     if plot_m:
         plot_movement()
-
-
-
-
+    if plot_p:
+        plot_phase_portrait()
