@@ -58,17 +58,18 @@ def b(i, n, bones, efforts):  # return the bi coefficient of b
     r = bone.r
     th = bone.l_theta[-1]  # is theta_k in euler's method
     _th = bone.l_theta[-2]  # is theta_k-1 in euler's method
+    th_dot = bone.theta_dot()
     J = bone.J
-    Fm = bone.F_tot_muscle(effort)
-    Tm = bone.C_tot_muscle(effort)
+    Fm = bone.F_tot_muscle(bones, effort)
+    Tm = bone.C_tot_muscle(bones, effort)
 
     if q == 0:
-        return (Fm[0] + m * r / 2 / t ** 2 * (cos(th) * (2 * th - _th) + sin(th) * (th - _th) ** 2) +
+        return (Fm[0] + m * r / 2 / t ** 2 * (cos(th) * (2 * th - _th) + sin(th) * (t * th_dot) ** 2) +
                 m / t ** 2 * sum(bones[p].r * (cos(bones[p].theta) * (2 * bones[p].theta - bones[p].l_theta[-2]) +
                                                sin(bones[p].theta) * (bones[p].theta - bones[p].l_theta[-2]) ** 2)
                                  for p in range(0, rest)))
     if q == 1:
-        return (Fm[1] + m * r / 2 / t ** 2 * (sin(th) * (2 * th - _th) - cos(th) * (th - _th) ** 2) - m * g +
+        return (Fm[1] + m * r / 2 / t ** 2 * (sin(th) * (2 * th - _th) - cos(th) * (t * th_dot) ** 2) - m * g +
                 m / t ** 2 * sum(bones[p].r * (sin(bones[p].theta) * (2 * bones[p].theta - bones[p].l_theta[-2]) -
                                                cos(bones[p].theta) * (bones[p].theta - bones[p].l_theta[-2]) ** 2)
                                  for p in range(0, rest)))

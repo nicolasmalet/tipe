@@ -1,3 +1,15 @@
+from matrix import a, b
+
+
+def compute_next_state(bones, efforts):
+
+    # create the system
+    n = len(bones)
+    A = [[a(i, j, n, bones) for j in range(3 * n)] for i in range(3 * n)]
+    B = [b(i, n, bones, efforts) for i in range(3 * n)]
+
+    # solve the system
+    return gaussian_algorithm(A, B)
 
 
 def gaussian_algorithm(a, b):  # solve any system with n equations for n variables

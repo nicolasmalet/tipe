@@ -11,10 +11,11 @@ N = int(simulation_time / t)  # number of steps needed
 # You can change the following variables depending on what you want to see
 
 running = True
+learning = True
 plotting = True
 
-plot_m = True  # plot movement
-plot_e = False  # plot energies
+plot_m = False  # plot movement
+plot_e = True  # plot energies
 plot_p = False  # plot phase portrait
 
 simulation = True  # show the system
