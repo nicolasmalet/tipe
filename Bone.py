@@ -19,7 +19,7 @@ class Bone:
         if self.index == 0:
             return [0, 0]
         else:
-            return bones[self.index - 1].end()
+            return bones[self.index - 1].end(bones)
 
     def end(self, bones):
         return v_sum(self.origin(bones), [self.r * sin(self.theta), - self.r * cos(self.theta)])
@@ -60,20 +60,21 @@ class Bone:
         u = scalar_mul(1 / norm(u), u)  # unit vector
         return scalar_mul(effort * muscle.max_force, u)
 
-    def F_tot_muscle(self, bones, effort):  # add up the forces exerted by the muscles on this bone
-        return v_list_sum([self.F_muscle(bones, muscle, effort) for muscle in self.muscles])
+    def F_tot_muscle(self, bones, efforts):  # add up the forces exerted by the muscles on this bone
+        return v_list_sum([self.F_muscle(bones, muscle, efforts[muscle.index]) for muscle in self.muscles])
 
     def C_muscle(self, bones, muscle, effort):  # torque exerted by a muscle on this bone
         OM = v_sub(muscle.tendon_position(bones, self), self.G(bones))
         F = self.F_muscle(bones, muscle, effort)
         return OM[0] * F[1] - OM[1] * F[0]
 
-    def C_tot_muscle(self, bones, effort):  # add up the torque exerted by the muscles on this bone
-        return sum([self.C_muscle(bones, muscle, effort) for muscle in self.muscles])
+    def C_tot_muscle(self, bones, efforts):  # add up the torque exerted by the muscles on this bone
+        return sum([self.C_muscle(bones, muscle, efforts[muscle.index]) for muscle in self.muscles])
 
 
 class Muscle:
-    def __init__(self, bone0, bone1, relative_start, relative_end, max_force, color):
+    def __init__(self, index, bone0, bone1, relative_start, relative_end, max_force, color):
+        self.index = index
         self.bone0 = bone0
         self.bone1 = bone1
         self.relative_0 = relative_start
@@ -102,29 +103,4 @@ class Muscle:
 
     def origin_to_tendon_length(self, bone):
         return norm(self.relative_tendon_position(bone))
-
-
-#
-
-# ground = Bone(0, 1, pi/2, 0, bone_color)
-# tibia = Bone(0, 0.49, - 5 * pi / 6, 6, bone_color)
-# femur = Bone(1, 0.43, 4 * pi / 6, 14, bone_color)
-# back = Bone(2, 0.53, -4 * pi / 6, 38, bone_color)
-# arm = Bone(3, 0.70, 0, 8, bone_color)
-#
-# calves = Muscle(ground, tibia, [0.05, 0], [0.4, 0], 5000, muscle_color)
-# quadriceps = Muscle(tibia, femur, [0.55, 0], [0.35, 0], 5000, muscle_color)
-# hamstrings = Muscle(femur, back, [0.1, 0], [-0.05, 0], 5000, muscle_color)
-# lats = Muscle(back, arm, [0.1, 0], [0.1, 0], 5000, muscle_color)
-#
-# bones = [tibia, femur, back, arm]
-#
-# muscles = [calves, quadriceps, hamstrings, lats]
-#
-# tibia.muscles = [calves, quadriceps]
-# femur.muscles = [quadriceps, hamstrings]
-# back.muscles = [hamstrings, lats]
-# arm.muscles = [lats]
-
-
 

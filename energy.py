@@ -18,6 +18,6 @@ def total_potential_energy(bones):
     return sum(potential_energy(bone, bones) for bone in bones)
 
 
-def P_muscle(bones, muscle):
+def p_muscle(bones, muscle):
     return (dot_product(muscle.bone0.F_muscle(bones, muscle, 1), muscle.bone0.v_tendon(bones, muscle)) +
             dot_product(muscle.bone1.F_muscle(bones, muscle, 1), muscle.bone1.v_tendon(bones, muscle)))

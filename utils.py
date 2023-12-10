@@ -1,4 +1,5 @@
 from constants import t
+import numpy as np
 
 
 def v_sum(v1, v2):
@@ -48,3 +49,5 @@ def dot_product(x, y):
     return x[0] * y[0] + x[1] * y[1]
 
 
+def mod_angle(theta):
+    return theta % 2 * np.pi - np.pi
