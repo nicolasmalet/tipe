@@ -21,6 +21,7 @@ def total_potential_energy(bones):
 def p_muscle(muscle, effort):
     p = 0
     for bone in [muscle.bone0, muscle.bone1]:
-        p += dot_product(bone.F_muscle(muscle, effort), bone.G_dot) + \
-            bone.C_muscle(muscle, effort) * bone.theta_dot
+        if bone.name != 'ground':
+            p += effort * (dot_product(bone.F_max_muscles[muscle.name], bone.G_dot) + bone.C_max_muscles[
+                muscle.name] * bone.theta_dot)
     return p

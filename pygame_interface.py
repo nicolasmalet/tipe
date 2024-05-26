@@ -1,8 +1,7 @@
 import pygame as pg
-from utils import v_sum, scalar_mul
 from constants import *
 from pygame.gfxdraw import filled_circle
-from bone import l_gravity_center
+from update import l_gravity_center
 
 
 if show_model:
@@ -33,22 +32,18 @@ def draw_muscle(muscle, effort):
 
 
 def draw_head(bones):
-    x, y = pos_to_screen(v_sum(bones[2].end, scalar_mul(r_head, bones[2].e_r)))
+    x, y = pos_to_screen(bones[2].end + r_head * bones[2].e_r)
     r = int(r_head * pixel_per_meter * ratio_screen_reality)
     pg.gfxdraw.aacircle(screen, x, y, r, bone_color)
 
 
 def draw_vector(start, v, color):
-    pg.draw.aaline(screen, color, pos_to_screen(start), pos_to_screen(v_sum(start, v)))
-
-
-def draw_tendon_speed(muscle):
-    draw_vector(muscle.tendon_position(muscle.bone0), scalar_mul(1 / 10, muscle.bone0.v_tendon(muscle)), 'green')
-    draw_vector(muscle.tendon_position(muscle.bone1), scalar_mul(1 / 10, muscle.bone1.v_tendon(muscle)), 'green')
+    pg.draw.aaline(screen, color, pos_to_screen(start), pos_to_screen(start + v))
 
 
 def draw_ground():
-    pg.draw.aaline(screen, ground_color, [0, pos_to_screen([0, 0])[1]], [screen_size_x, pos_to_screen([0, 0])[1]])
+    y = pos_to_screen([0, 0])[1]
+    pg.draw.aaline(screen, ground_color, [0, y], [screen_size_x, y])
 
 
 def draw_point(pos):
@@ -80,9 +75,6 @@ def update_display(bones, muscles, efforts, time):
     for muscle in muscles:
         draw_muscle(muscle, efforts[muscle.index])
 
-    if show_v_tendon:
-        for muscle in muscles:
-            draw_tendon_speed(muscle)
     if show_time:
         draw_time(time)
 

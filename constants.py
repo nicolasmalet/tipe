@@ -1,37 +1,33 @@
+import numpy as np
 
 
 g = 9.81  # gravity constant of Earth at the sea level
-bar_mass = 170  # mass of the deadlift barr
+bar_mass = 175  # mass of the deadlift barr
 
 
-t = 1 * 10 ** (-3)  # time for euler's method, the lower the time, the better the approximation
-# simulation_time = 1  # duration of the model
-# N = int(simulation_time / t)  # number of steps needed
+t = 1 * 10 ** - 3  # time for euler's method, the lower the time, the better the approximation
 
 
 # You can change the following variables depending on what you want to see
 
-learning = False
-testing = True
 running = True
 plotting = True
 review = True
 
 plot_m = True  # plot movement
 plot_e = True  # plot energies
-plot_p = False  # plot phase portrait
+plot_p = True  # plot phase portrait
 plot_eff = True  # plot efforts
 plot_Q_function = True  # plot the Q function
 show_model = True  # show the system
 show_ground = True  # draw the ground
 show_bar = True  # draw the deadlift bar
-show_v_tendon = False  # show the velocity of each tendon
 show_time = True  # show the timer
-show_gravity_center = False  # show the center of grqvity of the entire system
+show_gravity_center = False  # show the center of gravity of the entire system
 
 
-# background_color = (27, 34, 26)
-background_color = (18, 18, 18)
+background_color = np.array([27, 34, 26])
+# background_color = (18, 18, 18)
 ground_color = (50, 50, 50)
 bone_color = (255, 255, 240)
 muscle_color = (255, 0, 0)
