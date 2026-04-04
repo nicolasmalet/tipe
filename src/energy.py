@@ -1,15 +1,14 @@
+import numpy as np
+
 from bone import Bone, Muscle
 from config import g
-
-from typing import List
-import numpy as np
 
 
 def kinetic_energy(bone: Bone) -> float:
     """
     Calculates the kinetic energy of a single bone.
     """
-    return 0.5 * bone.J * bone.theta_dot ** 2 + 0.5 * bone.m * np.linalg.norm(bone.G_dot) ** 2
+    return 0.5 * bone.J * bone.theta_dot ** 2 + 0.5 * bone.m * float(np.linalg.norm(bone.G_dot) ** 2)
 
 
 def potential_energy(bone: Bone) -> float:
@@ -19,14 +18,14 @@ def potential_energy(bone: Bone) -> float:
     return bone.m * g * bone.G[1] - bone.Ep0
 
 
-def total_kinetic_energy(bones: List[Bone]) -> float:
+def total_kinetic_energy(bones: list[Bone]) -> float:
     """
     Calculates the total kinetic energy of the system.
     """
     return sum(kinetic_energy(bone) for bone in bones)
 
 
-def total_potential_energy(bones: List[Bone]) -> float:
+def total_potential_energy(bones: list[Bone]) -> float:
     """
     Calculates the total potential energy of the system.
     """

@@ -1,17 +1,16 @@
-from config import t
-
-from typing import List, Union
 import numpy as np
 
+from config import t
 
-def differentiate(f: List[float]) -> List[float]:
+
+def differentiate(f: list[float]) -> list[float]:
     """
     Computes the discrete derivative of a list of values over time t.
     """
-    return [(f[i+1] - f[i]) / t for i in range(len(f) - 1)]
+    return [(f[i + 1] - f[i]) / t for i in range(len(f) - 1)]
 
 
-def integrate(f: List[float]) -> List[float]:
+def integrate(f: list[float]) -> list[float]:
     """
     Computes the discrete integral of a list of values over time t using the Euler method.
     """

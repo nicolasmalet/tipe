@@ -1,10 +1,9 @@
-from utils import differentiate, integrate
-from config import t, background_color
-import state
-
 import matplotlib.pyplot as plt
 import numpy as np
 
+import state
+from config import t, background_color
+from utils import differentiate, integrate
 
 plt.style.use('dark_background')
 
@@ -72,9 +71,11 @@ def plot_energies() -> None:
     axs[1, 0].plot(t_axis, np.sum(np.array([state.Ec, state.Ep]), axis=0), label='Em', color='white', linewidth=1)
     axs[1, 0].plot(t_axis, integrate(np.sum(np.array(state.l_p_muscle), axis=0))[1: N + 1],
                    label='E tot muscles', color='magenta', linewidth=1)
-    axs[1, 1].plot(t_axis[1:-1], differentiate(np.sum(np.array([state.Ec[1:], state.Ep[1:]]), axis=0)), label='P system',
+    axs[1, 1].plot(t_axis[1:-1], differentiate(np.sum(np.array([state.Ec[1:], state.Ep[1:]]), axis=0)),
+                   label='P system',
                    color='white', linewidth=1)
-    axs[1, 1].plot(t_axis, np.sum(np.array(state.l_p_muscle), axis=0), label='P tot muscles', color='magenta', linewidth=1)
+    axs[1, 1].plot(t_axis, np.sum(np.array(state.l_p_muscle), axis=0), label='P tot muscles', color='magenta',
+                   linewidth=1)
 
     axs[0, 0].set_title('system energy')
     axs[0, 1].set_title('muscle energy')
@@ -121,7 +122,8 @@ def plot_efforts() -> None:
     t_axis = [i * t for i in range(N)]
 
     calves, quadriceps, hamstrings, low_back, lats = state.muscles
-    axs[0, 0].plot(t_axis[1:], [state.l_efforts[i][low_back.index] for i in range(1, len(state.l_efforts))], label=low_back.name,
+    axs[0, 0].plot(t_axis[1:], [state.l_efforts[i][low_back.index] for i in range(1, len(state.l_efforts))],
+                   label=low_back.name,
                    color='#8dd3c7', linewidth=1)
     axs[0, 1].plot(t_axis[1:], [state.l_efforts[i][quadriceps.index] for i in range(1, len(state.l_efforts))],
                    label=quadriceps.name, color='#feffb3', linewidth=1, )
@@ -129,7 +131,8 @@ def plot_efforts() -> None:
                    label=lats.name, color='#bfbbd9', linewidth=1)
     axs[1, 0].plot(t_axis[1:], [state.l_efforts[i][hamstrings.index] for i in range(1, len(state.l_efforts))],
                    label=hamstrings.name, color='#fa8174', linewidth=1)
-    axs[1, 1].plot(t_axis[1:], [state.l_efforts[i][calves.index] for i in range(1, len(state.l_efforts))], label=calves.name,
+    axs[1, 1].plot(t_axis[1:], [state.l_efforts[i][calves.index] for i in range(1, len(state.l_efforts))],
+                   label=calves.name,
                    color='#81b1d2', linewidth=1)
 
     name = {0: 'Q', 1: 'shoulder height', 2: 'gravity center pos', 3: 'gravity center speed',

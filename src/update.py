@@ -1,9 +1,8 @@
-from energy import get_gravity_center, total_kinetic_energy, total_potential_energy, p_muscle
-from matrix import a_ij, b_i
-import state
-
 import numpy as np
 
+import state
+from energy import get_gravity_center, total_kinetic_energy, total_potential_energy, p_muscle
+from matrix import a_ij, b_i
 
 n: int = len(state.bones)
 m: int = len(state.muscles)

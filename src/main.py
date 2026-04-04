@@ -1,13 +1,12 @@
-from plot import plot_movement, plot_energies, plot_phase_portrait, plot_efforts, plot_Q
-from update import update_model, reset_energy
-from pygame_interface import update_display
-from brain import make_decision
-from state import reset_bones
-from config import *
-
 import pygame as pg
-import state
 
+import state
+from brain import make_decision
+from config import *
+from plot import plot_movement, plot_energies, plot_phase_portrait, plot_efforts, plot_Q
+from pygame_interface import update_display
+from state import reset_bones
+from update import update_model, reset_energy
 
 i = 0
 
@@ -20,7 +19,6 @@ while True:
             break
 
     i += 1
-
 
 if review:
     reset_bones()

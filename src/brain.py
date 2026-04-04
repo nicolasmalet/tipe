@@ -1,11 +1,12 @@
+from copy import copy
+from typing import Callable, List, Union
+
+import numpy as np
+
+import state
+from config import t
 from update import update_model, reverse_l_gravity_center_changes
 from utils import least_squares_method
-from config import t
-import state
-
-from typing import Callable, List, Union
-from copy import copy
-import numpy as np
 
 
 def make_decision() -> np.ndarray:
@@ -26,16 +27,16 @@ def gradient_descent(v: np.ndarray, f: Callable, epsilon: float, k: float, gamma
     m = len(state.muscles)
 
     x = v.copy()
-    l_dN = [i / 1000 for i in range(-1, 2)]
+    l_dN = np.array([-1, 0, 1]) / 1000
     bone_states = [bone.get_state() for bone in state.bones]
     nabla = np.zeros(m)
 
     for i in range(m):
-        values = []
+        values = np.zeros(3)
 
-        for dN in l_dN:
+        for j, dN in enumerate(l_dN):
             update_model(x + dN * e_i(i, m), shallow_update=True)
-            values.append(f())
+            values[j] = f()
             reverse_changes(bone_states)
 
         nabla[i] = least_squares_method(l_dN, values)

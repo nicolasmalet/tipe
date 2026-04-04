@@ -1,7 +1,8 @@
-from config import *
+from __future__ import annotations
 
-from typing import List, Tuple, Optional, Any, Dict
-import numpy as np
+from typing import Tuple, Optional, Any, Dict
+
+from config import *
 
 
 class Bone:
@@ -9,23 +10,23 @@ class Bone:
     Represents a bone segment in the biomechanical model.
     """
 
-    def __init__(self, name: str, previous_bone: Optional['Bone'], muscles: List['Muscle'], length: float,
-                 theta0: float, mass: float, color: Tuple[int, int, int]):
+    def __init__(self, name: str, previous_bone: Optional[Bone], muscles: list[Muscle], length: float,
+                 theta0: float, mass: float, color: Tuple[int, int, int]) -> None:
         """
         Initializes a Bone instance.
         """
         self.name: str = name
-        self.previous_bone: Optional['Bone'] = previous_bone
+        self.previous_bone: Optional[Bone] = previous_bone
         self.index: int = self.get_index()
         self.r: float = length
         self.m: float = mass
         self.color: Tuple[int, int, int] = color
         self.J: float = 1 / 12 * mass * length ** 2
-        self.muscles: List['Muscle'] = muscles
+        self.muscles: list[Muscle] = muscles
         self.Ep0: float = 0
 
         self.theta: float = theta0
-        self.l_theta: List[float] = [theta0, theta0, theta0]
+        self.l_theta: list[float] = [theta0, theta0, theta0]
 
         self.e_r: np.ndarray
         self.e_theta: np.ndarray
@@ -44,7 +45,7 @@ class Bone:
         self.F_max_muscles: Dict[str, np.ndarray] = {}
         self.C_max_muscles: Dict[str, float] = {}
 
-        self.first_state: Optional[List[Any]] = None
+        self.first_state: Optional[list[Any]] = None
 
     def update(self, shallow_update: bool = False) -> None:
         """
@@ -69,14 +70,14 @@ class Bone:
                 self.F_max_muscles[muscle.name] = self.get_F_max_muscle(muscle)
                 self.C_max_muscles[muscle.name] = self.get_C_max_muscle(muscle)
 
-    def get_state(self) -> List[Any]:
+    def get_state(self) -> list[Any]:
         """
         Returns the current state of the bone as a list.
         """
         return [self.e_r, self.e_theta, self.origin, self.end, self.theta_dot, self.G, self.G_dot, self.P,
                 self.F_max_muscles, self.C_max_muscles]
 
-    def set_state(self, state: List[Any]) -> None:
+    def set_state(self, state: list[Any]) -> None:
         """
         Sets the state of the bone from a provided list.
         """
@@ -138,7 +139,7 @@ class Bone:
         return 0.5 * self.r * self.theta_dot * self.e_theta + \
             np.sum(np.array([bones[i].r * bones[i].theta_dot * bones[i].e_theta for i in range(self.index)]), axis=0)
 
-    def get_F_max_muscle(self, muscle: 'Muscle') -> np.ndarray:
+    def get_F_max_muscle(self, muscle: Muscle) -> np.ndarray:
         """
         Calculates the maximum force vector that a muscle can exert on this bone.
         """
@@ -156,7 +157,7 @@ class Bone:
         F_gravity = np.array([0, - self.m * g])
         return F_tot_muscle + F_gravity
 
-    def get_C_max_muscle(self, muscle: 'Muscle') -> float:
+    def get_C_max_muscle(self, muscle: Muscle) -> float:
         """
         Calculates the maximum torque a muscle can exert on this bone.
         """
@@ -177,8 +178,8 @@ class Muscle:
     Represents a muscle connecting two bones.
     """
 
-    def __init__(self, name: str, index: int, relative_start: List[float], relative_end: List[float], max_force: float,
-                 color: Tuple[int, int, int]):
+    def __init__(self, name: str, index: int, relative_start: list[float], relative_end: list[float], max_force: float,
+                 color: Tuple[int, int, int]) -> None:
         """
         Initializes a Muscle instance.
         """
@@ -186,8 +187,8 @@ class Muscle:
         self.index: int = index
         self.bone0: Optional[Bone] = None
         self.bone1: Optional[Bone] = None
-        self.relative_0: List[float] = relative_start
-        self.relative_1: List[float] = relative_end
+        self.relative_0: list[float] = relative_start
+        self.relative_1: list[float] = relative_end
         self.max_force: float = max_force
         self.color: Tuple[int, int, int] = color
 
@@ -215,7 +216,7 @@ class Muscle:
         """
         return bone.origin + np.dot(bone.P, self.relative_tendon_position(bone))
 
-    def relative_tendon_position(self, bone: Bone) -> List[float]:
+    def relative_tendon_position(self, bone: Bone) -> list[float]:
         """
         Returns the relative position of the tendon attachment on the given bone.
         """
@@ -223,9 +224,3 @@ class Muscle:
             return self.relative_0
         else:
             return self.relative_1
-
-    def origin_to_tendon_length(self, bone: Bone) -> float:
-        """
-        Calculates the distance from the bone's origin to the tendon attachment.
-        """
-        return N2(self.relative_tendon_position(bone))

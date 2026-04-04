@@ -1,12 +1,9 @@
 import numpy as np
 
-
 g = 9.81  # gravity constant of Earth at the sea level
 bar_mass = 175  # mass of the deadlift barr
 
-
 t = 1e-3  # time for euler's method, the lower the time, the better the approximation
-
 
 # You can change the following variables depending on what you want to see
 
@@ -24,7 +21,6 @@ show_ground = True  # draw the ground
 show_bar = True  # draw the deadlift bar
 show_time = True  # show the timer
 show_gravity_center = False  # show the center of gravity of the entire system
-
 
 background_color = np.array([27, 34, 26])
 ground_color = (50, 50, 50)

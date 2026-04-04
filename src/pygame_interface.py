@@ -1,11 +1,11 @@
-import pygame as pg
-from config import *
-from pygame.gfxdraw import filled_circle, aacircle
-import state
 from typing import Tuple, List
-import numpy as np
-from bone import Bone, Muscle
 
+import pygame as pg
+from pygame.gfxdraw import filled_circle, aacircle
+
+import state
+from bone import Bone, Muscle
+from config import *
 
 if show_model:
     pg.font.init()

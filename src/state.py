@@ -1,10 +1,10 @@
-from energy import total_potential_energy, get_gravity_center
-from config import g, bar_mass, muscle_color, bone_color
-from bone import Bone, Muscle
-
 from copy import deepcopy
+
 import numpy as np
 
+from bone import Bone, Muscle
+from config import g, bar_mass, muscle_color, bone_color
+from energy import total_potential_energy, get_gravity_center
 
 calves = Muscle('calves', 0, [-0.05, 0], [0.4, 0], 10000, muscle_color)
 quadriceps = Muscle('quadriceps', 1, [0.55, 0], [0.35, 0], 10000, muscle_color)
@@ -34,6 +34,7 @@ def assign_muscles_to_bones() -> None:
                 else:
                     muscle.bone1 = bone
 
+
 def reset_bones() -> None:
     """
     Resets all bones to their initial state.
@@ -43,12 +44,14 @@ def reset_bones() -> None:
         bone.theta = bone.l_theta[-1]
         bone.set_state(bone.first_state)
 
+
 def set_Ep0() -> None:
     """
     Sets the initial potential energy reference for each bone so that Ep(0) is 0.
     """
     for bone in bones:
         bone.Ep0 = bone.m * g * bone.G[1]
+
 
 assign_muscles_to_bones()
 
@@ -61,7 +64,8 @@ set_Ep0()
 efforts: np.ndarray = np.array([0.36, 0.68, 1, 1, 0])
 l_efforts: list[np.ndarray] = [efforts]
 
-l_Q: list[list[float]] = [[-1532.1913424428103, 3749.6096493863097, 24.366758337800864, 0.0, 51.02162584457079, 5206.412607646748]]
+l_Q: list[list[float]] = [
+    [-1532.1913424428103, 3749.6096493863097, 24.366758337800864, 0.0, 51.02162584457079, 5206.412607646748]]
 
 Ec: list[float] = [0.0]
 Ep: list[float] = [total_potential_energy(bones)]
